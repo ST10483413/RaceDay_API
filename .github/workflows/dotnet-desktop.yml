@@ -1,0 +1,61 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build, Test, and Validate
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup .NET 8 SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # 3. Restore NuGet packages
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 4. Build the solution
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      # 5. Run all unit tests
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release --verbosity normal
+
+      # 6. Validate the /docs folder has required files
+      - name: Validate docs folder
+        run: |
+          echo "Checking /docs folder..."
+          if [ ! -d "docs" ]; then
+            echo "❌ /docs folder is missing!"
+            exit 1
+          fi
+
+          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
+            echo "❌ ERD file (PNG or PDF) is missing!"
+            exit 1
+          fi
+
+          if [ ! -f "docs/API_Endpoint_Plan.md" ] && [ ! -f "docs/API_Endpoint_Plan.pdf" ]; then
+            echo "❌ API Endpoint Plan is missing!"
+            exit 1
+          fi
+
+          if [ ! -f "docs/RaceDay_Schema.sql" ]; then
+            echo "❌ SQL schema script is missing!"
+            exit 1
+          fi
+
+          echo "✅ All required docs are present."
