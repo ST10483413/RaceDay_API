@@ -1,12 +1,8 @@
-# RaceDay_API
-
-
-
 # RaceDay API
 
 
 
-## 📖 Project Overview
+##  Project Overview
 
 The RaceDay API is the backend system for a comprehensive event management application. It streamlines the process of organizing and participating in running, cycling, and walking events. The API is built using ASP.NET Core Web API, Entity Framework Core (Code-First) and SQL Server and it implements role-based access control via JWT authentication.
 
