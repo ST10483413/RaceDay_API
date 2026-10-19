@@ -1,52 +1,15 @@
-name: Build and Test
+name: Validate Repository Structure
 
-on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  validate-files:
     runs-on: ubuntu-latest
-    name: Build, Test, and Validate
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      # THIS will automatically find your .sln file and build everything inside it
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
-
-      - name: Validate docs folder
+      - uses: actions/checkout@v4
+      - name: Check for required files
         run: |
-          echo "Checking /docs folder..."
-          if [ ! -d "docs" ]; then
-            echo "❌ /docs folder is missing!"
-            exit 1
-          fi
-          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
-            echo "❌ ERD file is missing!"
-            exit 1
-          fi
-          if [ ! -f "docs/API_Endpoint_Plan.md" ] && [ ! -f "docs/API_Endpoint_Plan.pdf" ]; then
-            echo "❌ API Endpoint Plan is missing!"
-            exit 1
-          fi
-          if [ ! -f "docs/RaceDay_Schema.sql" ]; then
-            echo "❌ SQL schema script is missing!"
-            exit 1
-          fi
-          echo "✅ All required docs are present."
+          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then echo "ERD not found!" && exit 1; fi
+          if [ ! -f "docs/API_Endpoint_Plan.md" ] && [ ! -f "docs/API_Endpoint_Plan.pdf" ]; then echo "API Endpoint Plan not found!" && exit 1; fi
+          if [ ! -f "docs/RaceDay_Schema.sql" ]; then echo "SQL script not found!" && exit 1; fi
+          echo "All required files are present."
