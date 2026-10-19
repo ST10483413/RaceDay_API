@@ -22,17 +22,21 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # 3. Restore NuGet packages
+      # 3. Restore NuGet packages explicitly
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          dotnet restore RaceDay.API/RaceDay.API.csproj
+          dotnet restore RaceDay.Tests/RaceDay.Tests.csproj
 
-      # 4. Build the solution
+      # 4. Build explicitly
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: |
+          dotnet build RaceDay.API/RaceDay.API.csproj --no-restore --configuration Release
+          dotnet build RaceDay.Tests/RaceDay.Tests.csproj --no-restore --configuration Release
 
-      # 5. Run all unit tests
+      # 5. Run all unit tests explicitly
       - name: Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test RaceDay.Tests/RaceDay.Tests.csproj --no-build --configuration Release --verbosity normal
 
       # 6. Validate the /docs folder has required files
       - name: Validate docs folder
