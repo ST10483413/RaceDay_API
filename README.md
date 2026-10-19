@@ -1,6 +1,6 @@
 # RaceDay API
 
-
+[![Validate Repository Structure](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml)
 
 ##  Project Overview
 
@@ -33,7 +33,7 @@ The system supports two distinct roles with specific permissions:
 - Documentation:Swagger / OpenAPI
 - Testing: xUnit & EF Core InMemory
 - CI/CD: GitHub Actions
-
+[![Validate Repository Structure](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml)
 ---
 
 ##  Setup & Installation
@@ -130,7 +130,7 @@ This repository uses **GitHub Actions** for continuous integration.
 - It restores dependencies, builds the solution, runs all unit tests, and validates that required planning documents exist in the `/docs` folder.
 
 ### Green Build Screenshot
-*(Replace the image below with a screenshot of your successful GitHub Actions run)*
+[![Validate Repository Structure](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml)
 
 ![CI Build Success](docs/screenshots/ci-green-build.png)
 
