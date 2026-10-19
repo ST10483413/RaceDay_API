@@ -1,7 +1,9 @@
 # RaceDay API
-YOUTUBE LINK (https://youtu.be/pY11KtubTCw)
+
 [![Validate Repository Structure](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml)
 
+
+YOUTUBE LINK (https://youtu.be/UzqlmXQ_64Y)
 ##  Project Overview
 
 The RaceDay API is the backend system for a comprehensive event management application. It streamlines the process of organizing and participating in running, cycling, and walking events. The API is built using ASP.NET Core Web API, Entity Framework Core (Code-First) and SQL Server and it implements role-based access control via JWT authentication.
@@ -140,7 +142,7 @@ This repository uses **GitHub Actions** for continuous integration.
 A complete video demonstration of the API functionality, role-based access, Swagger testing, and CI/CD pipeline can be found below:
 
 **Watch the Part 2 API Walkthrough on YouTube
-(https://youtu.be/pY11KtubTCw)**
+( https://youtu.be/UzqlmXQ_64Y)**
 
 ---
 
@@ -151,4 +153,4 @@ A complete video demonstration of the API functionality, role-based access, Swag
 - **Module:** PROG6212 Programming 2B
 ```
 
----
+ 
