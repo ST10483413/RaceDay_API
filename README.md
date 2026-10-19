@@ -1,5 +1,5 @@
 # RaceDay API
-
+YOUTUBE LINK (https://youtu.be/pY11KtubTCw)
 [![Validate Repository Structure](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/ST10483413/RaceDay_API/actions/workflows/dotnet-desktop.yml)
 
 ##  Project Overview
@@ -46,7 +46,6 @@ The system supports two distinct roles with specific permissions:
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/ST10483413/RaceDay_API.git
-cd YOUR-REPO-NAME
 ```
 
 ### Step 2: Configure the Database
@@ -70,7 +69,7 @@ cd YOUR-REPO-NAME
    
 
 ### Step 4: Run the API
-1. Set `RaceDay.API` as the Startup Project.
+1. Set `RaceDay_API` as the Startup Project.
 2. Press **F5** or click the green **Start** button.
 3. Your browser will automatically open to the Swagger UI at `https://localhost:7115/swagger`.
 
@@ -140,7 +139,8 @@ This repository uses **GitHub Actions** for continuous integration.
 
 A complete video demonstration of the API functionality, role-based access, Swagger testing, and CI/CD pipeline can be found below:
 
-**[Watch the Part 2 API Walkthrough on YouTube](https://youtu.be/YOUR-VIDEO-LINK-HERE)**
+**Watch the Part 2 API Walkthrough on YouTube
+(https://youtu.be/pY11KtubTCw)**
 
 ---
 
