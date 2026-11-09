@@ -23,7 +23,7 @@ namespace RaceDay_API.Controllers
             _config = config;
         }
 
-        // POST: /api/auth/register
+        // POST /api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
@@ -60,7 +60,7 @@ namespace RaceDay_API.Controllers
             });
         }
 
-        // POST: /api/auth/login
+        // POST /api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {

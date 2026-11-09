@@ -24,43 +24,43 @@ namespace RaceDay_API.Data
             // Unique Email
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
-            // One-to-One: User ↔ Organiser
+            // One-to-One: User to Organiser
             modelBuilder.Entity<Organiser>()
                 .HasOne(o => o.User).WithOne(u => u.Organiser)
                 .HasForeignKey<Organiser>(o => o.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // One-to-One: User ↔ Participant
+            // One-to-One: User to Participant
             modelBuilder.Entity<Participant>()
                 .HasOne(p => p.User).WithOne(u => u.Participant)
                 .HasForeignKey<Participant>(p => p.UserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // One-to-Many: Organiser → Events
+            // One-to-Many: Organiser to Events
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Organiser).WithMany(o => o.Events)
                 .HasForeignKey(e => e.OrganiserID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // One-to-Many: Event → Categories
+            // One-to-Many: Event to Categories
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.Event).WithMany(e => e.Categories)
                 .HasForeignKey(c => c.EventID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Enrollment → Participant (Restrict to avoid cascade path error)
+            // Enrollment to Participant (Restrict to avoid cascade path error)
             modelBuilder.Entity<Enrollment>()
                 .HasOne(e => e.Participant).WithMany(p => p.Enrollments)
                 .HasForeignKey(e => e.ParticipantID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Enrollment → Category (Cascade)
+            // Enrollment to Category (Cascade)
             modelBuilder.Entity<Enrollment>()
                 .HasOne(e => e.Category).WithMany(c => c.Enrollments)
                 .HasForeignKey(e => e.CategoryID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // One-to-One: Enrollment ↔ Result
+            // One-to-One: Enrollment to Result
             modelBuilder.Entity<Result>()
                 .HasOne(r => r.Enrollment).WithOne(e => e.Result)
                 .HasForeignKey<Result>(r => r.EnrollmentID)

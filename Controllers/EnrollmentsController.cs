@@ -15,7 +15,7 @@ namespace RaceDay_API.Controllers
         private readonly ApplicationDbContext _context;
         public EnrollmentsController(ApplicationDbContext context) => _context = context;
 
-        // POST: /api/enrollments (Participant only)
+        // POST /api/enrollments (Participant only)
         [HttpPost]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> Enroll([FromBody] int categoryId)
@@ -44,7 +44,7 @@ namespace RaceDay_API.Controllers
             return StatusCode(201, new { enrollment.EnrollmentID, enrollment.Status, enrollment.EnrollmentDate });
         }
 
-        // GET: /api/enrollments/me (Participant views own)
+        // GET /api/enrollments/me (Participant views own)
         [HttpGet("me")]
         [Authorize(Roles = "Participant")]
         public async Task<IActionResult> GetMyEnrollments()
@@ -93,7 +93,7 @@ namespace RaceDay_API.Controllers
             return Ok(list);
         }
 
-        // GET: /api/enrollments/event/{eventId} (Organiser views all enrolments for their event)
+        // GET /api/enrollments/event/{eventId} (Organiser views all enrolments for their event)
         [HttpGet("event/{eventId}")]
         [Authorize(Roles = "Organiser")]
         public async Task<IActionResult> GetByEvent(int eventId)

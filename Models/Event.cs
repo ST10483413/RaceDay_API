@@ -35,6 +35,8 @@ namespace RaceDay_API.Models
         [Required, Range(1, 100000)]
         public int MaxParticipants { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("OrganiserID")]

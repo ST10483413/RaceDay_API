@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using RaceDay_API.Data;
 using RaceDay_API.DTOs;
 using RaceDay_API.Models;
@@ -14,41 +13,70 @@ namespace RaceDay_API.Controllers
     public class EventsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+
         public EventsController(ApplicationDbContext context) => _context = context;
 
-        // GET: /api/events
+        // GET api/events (For Participants gets all events)
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAll()
         {
             var events = await _context.Events
                 .Include(e => e.Categories)
-                .Select(e => new EventDto
+                .Select(e => new
                 {
-                    EventID = e.EventID,
-                    OrganiserID = e.OrganiserID,
-                    EventName = e.EventName,
-                    Description = e.Description,
-                    EventDate = e.EventDate,
-                    Location = e.Location,
-                    Distance = e.Distance,
-                    EventType = e.EventType,
-                    MaxParticipants = e.MaxParticipants,
-                    CreatedAt = e.CreatedAt,
-                    Categories = e.Categories.Select(c => new CategoryDto
+                    e.EventID,
+                    e.OrganiserID,
+                    e.EventName,
+                    e.Description,
+                    e.EventDate,
+                    e.Location,
+                    e.Distance,
+                    e.EventType,
+                    e.MaxParticipants,
+                    e.ImageUrl,
+                    Categories = e.Categories.Select(c => new
                     {
-                        CategoryID = c.CategoryID,
-                        EventID = c.EventID,
-                        CategoryName = c.CategoryName,
-                        Distance = c.Distance,
-                        AgeGroup = c.AgeGroup
+                        c.CategoryID,
+                        c.CategoryName,
+                        c.Distance,
+                        c.AgeGroup
                     }).ToList()
                 }).ToListAsync();
 
             return Ok(events);
         }
 
-        // GET: /api/events/{id}
+        // GET api/events/my-events (For Organisers - gets only THEIR events)
+        
+        [HttpGet("my-events")]
+        [Authorize(Roles = "Organiser")]
+        public async Task<IActionResult> GetMyEvents()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var organiser = await _context.Organisers.FirstOrDefaultAsync(o => o.UserID == userId);
+            if (organiser == null) return Forbid();
+
+            var events = await _context.Events
+                .Where(e => e.OrganiserID == organiser.OrganiserID)
+                .Select(e => new
+                {
+                    e.EventID,
+                    e.EventName,
+                    e.EventDate,
+                    e.Location,
+                    e.Distance,
+                    e.EventType,
+                    e.MaxParticipants,
+                    e.Description,
+                    TotalEnrollments = e.Categories.SelectMany(c => c.Enrollments).Count()
+                })
+                .ToListAsync();
+
+            return Ok(events);
+        }
+
+        // GET api/events/5
         [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetById(int id)
@@ -56,32 +84,32 @@ namespace RaceDay_API.Controllers
             var e = await _context.Events
                 .Include(x => x.Categories)
                 .FirstOrDefaultAsync(x => x.EventID == id);
+
             if (e == null) return NotFound();
 
-            return Ok(new EventDto
+            return Ok(new
             {
-                EventID = e.EventID,
-                OrganiserID = e.OrganiserID,
-                EventName = e.EventName,
-                Description = e.Description,
-                EventDate = e.EventDate,
-                Location = e.Location,
-                Distance = e.Distance,
-                EventType = e.EventType,
-                MaxParticipants = e.MaxParticipants,
-                CreatedAt = e.CreatedAt,
-                Categories = e.Categories.Select(c => new CategoryDto
+                e.EventID,
+                e.OrganiserID,
+                e.EventName,
+                e.Description,
+                e.EventDate,
+                e.Location,
+                e.Distance,
+                e.EventType,
+                e.MaxParticipants,
+                e.ImageUrl,
+                Categories = e.Categories.Select(c => new
                 {
-                    CategoryID = c.CategoryID,
-                    EventID = c.EventID,
-                    CategoryName = c.CategoryName,
-                    Distance = c.Distance,
-                    AgeGroup = c.AgeGroup
+                    c.CategoryID,
+                    c.CategoryName,
+                    c.Distance,
+                    c.AgeGroup
                 }).ToList()
             });
         }
 
-        // POST: /api/events (Organiser only)
+        // POST api/events
         [HttpPost]
         [Authorize(Roles = "Organiser")]
         public async Task<IActionResult> Create([FromBody] CreateEventDto dto)
@@ -105,60 +133,27 @@ namespace RaceDay_API.Controllers
             _context.Events.Add(ev);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetById), new { id = ev.EventID }, new EventDto
-            {
-                EventID = ev.EventID,
-                OrganiserID = ev.OrganiserID,
-                EventName = ev.EventName,
-                Description = ev.Description,
-                EventDate = ev.EventDate,
-                Location = ev.Location,
-                Distance = ev.Distance,
-                EventType = ev.EventType,
-                MaxParticipants = ev.MaxParticipants,
-                CreatedAt = ev.CreatedAt
-            });
+            return Ok(new { ev.EventID });
         }
 
-        // PUT: /api/events/{id} (Organiser only, owns event)
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Organiser")]
-        public async Task<IActionResult> Update(int id, [FromBody] CreateEventDto dto)
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var organiser = await _context.Organisers.FirstOrDefaultAsync(o => o.UserID == userId);
-            var ev = await _context.Events.FindAsync(id);
-
-            if (ev == null) return NotFound();
-            if (organiser == null || ev.OrganiserID != organiser.OrganiserID) return Forbid();
-
-            ev.EventName = dto.EventName;
-            ev.Description = dto.Description;
-            ev.EventDate = dto.EventDate;
-            ev.Location = dto.Location;
-            ev.Distance = dto.Distance;
-            ev.EventType = dto.EventType;
-            ev.MaxParticipants = dto.MaxParticipants;
-
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        // DELETE: /api/events/{id}
+        // DELETE api/events/5
         [HttpDelete("{id}")]
         [Authorize(Roles = "Organiser")]
         public async Task<IActionResult> Delete(int id)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var organiser = await _context.Organisers.FirstOrDefaultAsync(o => o.UserID == userId);
-            var ev = await _context.Events.FindAsync(id);
+            if (organiser == null) return Forbid();
 
+            var ev = await _context.Events.FindAsync(id);
             if (ev == null) return NotFound();
-            if (organiser == null || ev.OrganiserID != organiser.OrganiserID) return Forbid();
+
+            if (ev.OrganiserID != organiser.OrganiserID) return Forbid();
 
             _context.Events.Remove(ev);
             await _context.SaveChangesAsync();
-            return NoContent();
+
+            return NoContent(); // should return 204 Success
         }
     }
 }

@@ -8,11 +8,11 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Database
+//  Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. JWT configuration
+//  JWT configuration
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("Jwt:Key missing");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "RaceDayAPI";
@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// 3. Controllers + JSON cycle fix
+//  Controllers + JSON cycle fix
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -44,7 +44,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 
-// 4. Swagger with JWT
+//  Swagger with JWT
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "RaceDay API", Version = "v1" });
@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
+builder.Services.AddScoped<RaceDay_API.Services.BlobService>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -81,6 +81,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

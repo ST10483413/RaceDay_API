@@ -15,7 +15,7 @@ namespace RaceDay_API.Controllers
         private readonly ApplicationDbContext _context;
         public CategoriesController(ApplicationDbContext context) => _context = context;
 
-        // GET: /api/categories
+        // GET /api/categories
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAll()
@@ -31,7 +31,7 @@ namespace RaceDay_API.Controllers
             return Ok(list);
         }
 
-        // GET: /api/events/{eventId}/categories
+        // GET /api/events/{eventId}/categories
         [HttpGet("/api/events/{eventId}/categories")]
         [Authorize]
         public async Task<IActionResult> GetByEvent(int eventId)
@@ -52,7 +52,7 @@ namespace RaceDay_API.Controllers
             return Ok(list);
         }
 
-        // POST: /api/categories (Organiser only)
+        // POST /api/categories (Organiser only)
         [HttpPost]
         [Authorize(Roles = "Organiser")]
         public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
@@ -86,7 +86,7 @@ namespace RaceDay_API.Controllers
             });
         }
 
-        // DELETE: /api/categories/{id}
+        // DELETE /api/categories/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Organiser")]
         public async Task<IActionResult> Delete(int id)

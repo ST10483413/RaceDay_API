@@ -22,6 +22,8 @@ namespace RaceDay_API.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public string? ImageUrl { get; set; }
+
         public Organiser? Organiser { get; set; }
         public Participant? Participant { get; set; }
     }

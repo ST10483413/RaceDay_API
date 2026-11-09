@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RaceDay_API.Data;
 using RaceDay_API.DTOs;
+using RaceDay_API.Services;
 using System.Security.Claims;
 
 namespace RaceDay_API.Controllers
@@ -13,9 +14,14 @@ namespace RaceDay_API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public UsersController(ApplicationDbContext context) => _context = context;
+        private readonly BlobService _blobService;
 
-        // GET: /api/users/profile
+        public UsersController(ApplicationDbContext context, BlobService blobService)
+        {
+            _context = context;
+            _blobService = blobService;
+        }
+
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
@@ -29,11 +35,11 @@ namespace RaceDay_API.Controllers
                 Email = user.Email,
                 FullName = user.FullName,
                 Role = user.Role,
+                ImageUrl = user.ImageUrl,
                 CreatedAt = user.CreatedAt
             });
         }
 
-        // PUT: /api/users/profile
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
         {
@@ -50,15 +56,23 @@ namespace RaceDay_API.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return Ok(new { message = "Updated" });
+        }
 
-            return Ok(new UserProfileDto
-            {
-                UserID = user.UserID,
-                Email = user.Email,
-                FullName = user.FullName,
-                Role = user.Role,
-                CreatedAt = user.CreatedAt
-            });
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            if (file == null || file.Length == 0) return BadRequest("No file uploaded.");
+
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound();
+
+            var imageUrl = await _blobService.UploadFileAsync(file);
+            user.ImageUrl = imageUrl;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { ImageUrl = imageUrl });
         }
     }
 }

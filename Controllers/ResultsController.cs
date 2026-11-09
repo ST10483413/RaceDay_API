@@ -15,13 +15,11 @@ namespace RaceDay_API.Controllers
         private readonly ApplicationDbContext _context;
         public ResultsController(ApplicationDbContext context) => _context = context;
 
-        // POST: /api/results (Organiser captures result)
+        // POST /api/results (Organiser captures result)
         [HttpPost]
         [Authorize(Roles = "Organiser")]
-        public async Task<IActionResult> Create([FromBody] CreateResultDto dto)
+        public IActionResult Create([FromBody] CreateResultDto dto)
         {
-            // ⚠️ Endpoint expects enrollment to be found by another means; this demo just creates
-            // Real flow: POST /api/enrollments/{id}/results
             return BadRequest(new { message = "Use POST /api/enrollments/{id}/results" });
         }
 
@@ -63,6 +61,33 @@ namespace RaceDay_API.Controllers
             });
         }
 
+        //  PUT: /api/enrollments/{id}/results (Organiser updates a result)
+        [HttpPut("/api/enrollments/{enrollmentId}/results")]
+        [Authorize(Roles = "Organiser")]
+        public async Task<IActionResult> UpdateResultForEnrollment(int enrollmentId, [FromBody] CreateResultDto dto)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var organiser = await _context.Organisers.FirstOrDefaultAsync(o => o.UserID == userId);
+            if (organiser == null) return Forbid();
+
+            var enrollment = await _context.Enrollments
+                .Include(e => e.Category).ThenInclude(c => c!.Event)
+                .FirstOrDefaultAsync(e => e.EnrollmentID == enrollmentId);
+
+            if (enrollment == null) return NotFound(new { message = "Enrollment not found." });
+            if (enrollment.Category!.Event!.OrganiserID != organiser.OrganiserID) return Forbid();
+
+            var existingResult = await _context.Results.FirstOrDefaultAsync(r => r.EnrollmentID == enrollmentId);
+            if (existingResult == null) return NotFound(new { message = "Result not found to update." });
+
+            existingResult.FinishTime = dto.FinishTime;
+            existingResult.Position = dto.Position;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Result updated successfully." });
+        }
+
         // GET: /api/results/me (Participant views own results)
         [HttpGet("me")]
         [Authorize(Roles = "Participant")]
@@ -78,16 +103,17 @@ namespace RaceDay_API.Controllers
                 .Select(r => new
                 {
                     r.ResultID,
-                    r.FinishTime,
+                    FinishTime = r.FinishTime.ToString(@"hh\:mm\:ss"),
                     r.Position,
                     EventName = r.Enrollment!.Category!.Event!.EventName,
+                    EventDate = r.Enrollment.Category.Event.EventDate,
                     CategoryName = r.Enrollment.Category.CategoryName
                 }).ToListAsync();
 
             return Ok(results);
         }
 
-        // GET: /api/events/{eventId}/results (Public leaderboard)
+        // GET /api/events/{eventId}/results (Public leaderboard)
         [HttpGet("/api/events/{eventId}/results")]
         [Authorize]
         public async Task<IActionResult> GetEventResults(int eventId)
@@ -103,7 +129,7 @@ namespace RaceDay_API.Controllers
                 .Select(r => new
                 {
                     r.Position,
-                    r.FinishTime,
+                    FinishTime = r.FinishTime.ToString(@"hh\:mm\:ss"),
                     Participant = r.Enrollment!.Participant!.User!.FullName,
                     Category = r.Enrollment.Category!.CategoryName
                 }).ToListAsync();
