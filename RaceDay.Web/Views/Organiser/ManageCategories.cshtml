@@ -1,0 +1,96 @@
+﻿@model RaceDay.Web.ViewModels.ManageCategoriesViewModel
+
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Manage Categories: <span class="text-primary">@Model.EventName</span></h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">← Back to Dashboard</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Left: Add Category Form -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add New Category</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddCategory" method="post">
+                        <input type="hidden" name="EventID" value="@Model.EventID" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category Name</label>
+                            <input name="CategoryName" class="form-control" placeholder="e.g., 10km Run" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Distance (km)</label>
+                            <input name="Distance" type="number" step="0.1" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Age Group (Optional)</label>
+                            <input name="AgeGroup" class="form-control" placeholder="e.g., U18, Senior" />
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Add Category</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Existing Categories -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Existing Categories</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.Categories.Any())
+                    {
+                        <div class="p-4 text-center text-muted">
+                            No categories added yet. Add one using the form on the left!
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Distance</th>
+                                    <th>Age Group</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">@cat.CategoryName</td>
+                                        <td>@cat.Distance km</td>
+                                        <td>@(string.IsNullOrEmpty(cat.AgeGroup) ? "-" : cat.AgeGroup)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

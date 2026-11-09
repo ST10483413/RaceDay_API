@@ -1,0 +1,83 @@
+﻿@model RaceDay.Web.ViewModels.EventDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.EventName;
+}
+
+<div class="container mt-4">
+
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Event Info -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="bg-primary text-white text-center py-5">
+                    <h2>@Model.EventType</h2>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title fw-bold">@Model.EventName</h2>
+                    <p class="text-muted lead">@Model.Description</p>
+                    <hr />
+                    <p class="mb-1"> <strong>Location:</strong> @Model.Location</p>
+                    <p class="mb-1"> <strong>Date:</strong> @Model.EventDate.ToString("MMMM dd, yyyy")</p>
+                    <p class="mb-1"> <strong>Total Distance:</strong> @Model.Distance km</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a asp-action="Index" class="btn btn-outline-secondary">← Back to Events</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories & Enrolment -->
+        <div class="col-md-6">
+            <h4 class="mb-3">Available Categories</h4>
+
+            @if (!Model.Categories.Any())
+            {
+                <div class="alert alert-warning">No categories have been defined for this event yet.</div>
+            }
+            else
+            {
+                <div class="list-group shadow-sm">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div>
+                                <h5 class="mb-1 fw-bold text-dark">@cat.CategoryName</h5>
+                                <small class="text-muted">
+                                    Distance: @cat.Distance km
+                                    @if (!string.IsNullOrEmpty(cat.AgeGroup))
+                                    {
+                                        <span>| Age: @cat.AgeGroup</span>
+                                    }
+                                </small>
+                            </div>
+
+                            <!-- Enrol Form -->
+                            <form asp-action="Enrol" method="post">
+                                <input type="hidden" name="categoryId" value="@cat.CategoryID" />
+                                <input type="hidden" name="eventId" value="@Model.EventID" />
+                                <button type="submit" class="btn btn-success">Enrol</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

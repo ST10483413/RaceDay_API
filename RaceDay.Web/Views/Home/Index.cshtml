@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container-fluid p-0">
+    <div class="hero-section text-center text-white d-flex align-items-center justify-content-center" style="height: 70vh; background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">CHASE YOUR LIMITS.</h1>
+            <p class="lead mb-5 fs-4">Join the ultimate running, walking, and cycling events. Track your progress, compete with others, and crush your goals.</p>
+
+            @if (Context.Session.GetString("JwtToken") == null)
+            {
+                <div class="d-flex justify-content-center gap-3">
+                    <a asp-controller="Auth" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3 fw-bold">Login to Register</a>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center gap-3">
+                    @if (Context.Session.GetString("UserRole") == "Participant")
+                    {
+                        <a asp-controller="Participant" asp-action="Index" class="btn btn-primary btn-lg px-5 py-3 fw-bold">Browse Upcoming Events</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Organiser" asp-action="Index" class="btn btn-primary btn-lg px-5 py-3 fw-bold">Manage My Events</a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Quick Info Section below the Hero -->
+<div class="container mt-5 mb-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4">
+                <h3 class="fw-bold" style="color: #ff5722;"> Run</h3>
+                <p class="text-muted">Find marathons, 10km runs, and fun runs near you.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4">
+                <h3 class="fw-bold" style="color: #00c853;"> Cycle</h3>
+                <p class="text-muted">Challenge yourself with grueling mountain bike and road races.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 p-4">
+                <h3 class="fw-bold" style="color: #2196f3;"> Walk</h3>
+                <p class="text-muted">Enjoy scenic charity walks and trail hikes.</p>
+            </div>
+        </div>
+    </div>
+</div>

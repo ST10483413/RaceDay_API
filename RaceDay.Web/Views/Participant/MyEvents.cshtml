@@ -1,0 +1,63 @@
+﻿@model IEnumerable<RaceDay.Web.ViewModels.EnrollmentViewModel>
+
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">My Enrolments</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't enrolled in any events yet. <a asp-action="Index">Browse events here</a>.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover mb-0 bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Enrolled On</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            
+                            <td class="fw-bold">@item.Event.EventName</td>
+                            <td>@item.Event.EventDate.ToString("MMM dd, yyyy")</td>
+
+                            <td>@item.Category.CategoryName</td>
+                            <td>@item.EnrollmentDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (item.Status == "Registered" || item.Status == "Confirmed")
+                                {
+                                    <span class="badge bg-success">Confirmed</span>
+                                }
+                                else if (item.Status == "Completed")
+                                {
+                                    <span class="badge bg-primary">Completed</span>
+                                }
+                                else if (item.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

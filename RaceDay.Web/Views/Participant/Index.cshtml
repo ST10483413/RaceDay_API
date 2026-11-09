@@ -1,0 +1,57 @@
+﻿@model IEnumerable<RaceDay.Web.ViewModels.EventViewModel>
+
+@{
+    ViewData["Title"] = "Participant Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Upcoming Events</h1>
+        <h4 class="text-muted">Welcome, @ViewBag.Name!</h4>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            No events are currently available. Check back later!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ev in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        
+                        <div class="bg-primary text-white text-center py-4" style="border-radius: 5px 5px 0 0;">
+                            <h4 class="mb-0">@ev.EventType</h4>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-dark fw-bold">@ev.EventName</h5>
+                            <p class="card-text text-muted small mb-2">
+                                 @ev.Location <br />
+                                 @ev.EventDate.ToString("MMMM dd, yyyy") <br />
+                                 @ev.Distance km
+                            </p>
+                            <p class="card-text">
+                                @if (!string.IsNullOrEmpty(ev.Description))
+                                {
+                                    @(ev.Description.Length > 60 ? ev.Description.Substring(0, 60) + "..." : ev.Description)
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">No description provided.</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0 pb-3">
+                            
+                            <a asp-action="Details" asp-route-id="@ev.EventID" class="btn btn-outline-primary w-100">View Details & Enrol</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

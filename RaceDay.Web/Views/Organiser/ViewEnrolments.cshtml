@@ -1,0 +1,87 @@
+﻿@model RaceDay.Web.ViewModels.ManageEnrolmentsViewModel
+
+@{
+    ViewData["Title"] = "View Enrolments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Enrolments for: <span class="text-primary">@Model.EventName</span></h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">← Back to Dashboard</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@TempData["Success"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@TempData["Error"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            @if (!Model.Enrolments.Any())
+            {
+                <div class="p-4 text-center text-muted">No one has enrolled in this event yet.</div>
+            }
+            else
+            {
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Participant</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Finish Time</th>
+                            <th>Position</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Enrolments)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.ParticipantName</td>
+                                <td>@item.CategoryName</td>
+                                <td>
+                                    @if (item.Status == "Completed")
+                                    {
+                                        <span class="badge bg-primary">Completed</span>
+                                    }
+                                    else if (item.Status == "Registered" || item.Status == "Confirmed")
+                                    {
+                                        <span class="badge bg-success">Confirmed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">@item.Status</span>
+                                    }
+                                </td>
+                                <td>@(item.FinishTime ?? "-")</td>
+                                <td>@(item.Position?.ToString() ?? "-")</td>
+                                <td>
+                                    <!-- ⭐ THE MISSING FORM TO ADD/UPDATE RESULTS -->
+                                    <form asp-action="AddResult" method="post" class="d-flex gap-2">
+                                        <input type="hidden" name="EnrollmentID" value="@item.EnrollmentID" />
+                                        <input type="hidden" name="EventID" value="@Model.EventID" />
+
+                                        <input name="FinishTime" class="form-control form-control-sm"
+                                               value="@item.FinishTime" placeholder="hh:mm:ss" style="width: 100px;" required />
+
+                                        <input name="Position" type="number" class="form-control form-control-sm"
+                                               value="@item.Position" placeholder="Pos" style="width: 70px;" required />
+
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            @(item.Status == "Completed" ? "Update" : "Save")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<RaceDay.Web.ViewModels.ResultViewModel>
+
+@{
+    ViewData["Title"] = "My Results";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">My Race Results</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You don't have any recorded race results yet. Keep training!
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded">
+            <table class="table table-hover mb-0 bg-white">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Finish Time</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">@item.EventName</td>
+                            <td>@item.EventDate.ToString("MMM dd, yyyy")</td>
+                            <td>@item.CategoryName</td>
+                            <td class="fw-bold text-success">@item.FinishTime</td>
+                            <td>
+                                <span class="badge bg-primary fs-6">@item.Position</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
