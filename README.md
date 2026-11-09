@@ -25,6 +25,14 @@ The system supports two distinct roles with specific permissions:
 - View their own race results.
 
 ---
+---
+
+## ⚠️ Part 3 Deviations (Approved by Lecturer)
+Based on explicit approval from the lecturer, the following deviations were made for Part 3:
+1. **Azure Blob Storage Replaced:** Instead of using Azure Blob Storage for cloud file handling, the API handles image uploads (Profile Pictures and Event Banners) locally and saves them to the API's `wwwroot/uploads` folder.
+2. **Docker Cancelled:** The application is not containerized. It runs locally via Visual Studio.
+
+---
 
 ##  Technology Stack
 
